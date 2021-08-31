@@ -1,0 +1,5 @@
+#wiki
+https://www.w3schools.com/python/default.asp
+
+#projuects
+https://github.com/tuvtran/project-based-learning#python

@@ -1,9 +1,14 @@
-def combinations(*items):
-  y=1
-  for x in items:
-    if x > 0:
-      y=x*y
-  return(y)
-combinations(3, 7, 4)
-combinations(2)
-combinations(2, 3)
+class Square:
+   def __init__(self, length, width):
+       self.length = length
+       self.width = width
+   def area(self):
+       return self.width * self.length
+r = Square(20, 2000)
+print(r.area())
+print("Rectangle Area: %d" % (r.area()))
+
+def testarea(length, width):
+       return length * width
+
+print(testarea(20, 2000))

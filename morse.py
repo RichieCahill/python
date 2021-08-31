@@ -1,4 +1,4 @@
-morse1 = []
+morselist = []
 morse = {
   "A": ".-",
   "B": "-...",
@@ -85,9 +85,12 @@ morse = {
 string = input("enter alpha sentens ")
 #Converst the input string to a list
 alpha=list(string)
-#Converts alpha input to morse1
+#Converts alpha input to morse
+
 for x in alpha:
-  morse1.append(morse[x])
-  morse1.append(" ")
+  morselist.append(morse[x])
+  morselist.append(" ")
 #prints the converted list
-print(''.join(morse1))
+print(''.join(morselist))
+
+encode_morse("HELP ME !") ➞ ".... . .-.. .--.   -- .   -.-.--"
