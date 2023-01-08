@@ -1,5 +1,5 @@
 from math import sqrt
-import time
+from time import time
 
 def PrimeChecker(number):
 	if number == 2:
@@ -10,12 +10,10 @@ def PrimeChecker(number):
 	primes = [2]
 	for i in range(3, int(sqrt(number)) + 1, 2):
 		for prime in primes:
-			# if i % prime == 0:
-			if i % prime: # i think this is way faster
+			if i % prime:
 				break
 		primes.append(i)
 	for prime in primes:
-		# if number % prime == 0:
 		if not number % prime:
 			return False
 	return True
@@ -35,7 +33,6 @@ test=[PrimeChecker(prime) for prime in notPrimes]
 print(set(test))
 
 
-# time.sleep(0.5)
-start_time = time.time()
+start_time = time()
 print(PrimeChecker(1000000001))
-print(time.time() - start_time)
+print(time() - start_time)
