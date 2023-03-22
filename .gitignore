@@ -2,3 +2,5 @@ __pycache__
 Test
 Test.*
 test.*
+TestDIR
+*.tar.zst
