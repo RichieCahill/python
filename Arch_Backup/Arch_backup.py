@@ -81,22 +81,25 @@ def arch_backup():
 	logging.info("arch_backup STARTING")
 	Now = datetime.now()
 
-	working_dir = "/etc/"
+	uid = 1000
+	gid = 1000
+	host = "192.168.99.40"
+	archive_dir = "/etc/"
 	temp_file = f"/tmp/{sha512(str(random()).encode()).hexdigest()}"
-	output_file = f"/ZFS/Storage/Backups/BOB/etc_{Now.strftime('%Y-%m-%d-%M')}.tar.zst.encrypted"
+	output_file = f"/ZFS/Storage/Backups/BOB/etc_{Now.strftime('%Y-%m-%d')}.tar.zst.encrypted"
 
 	# gets all pacman packages
-	GetPackageList(command = "pacman -Qent",output_file = f'{working_dir}pacman_list.cvs' )
+	GetPackageList(command = "pacman -Qent", output_file = f'{archive_dir}pacman_list.cvs' )
 	# gets all yay packages
-	GetPackageList(command = "pacman -Qmt",output_file = f'{working_dir}yay_list.cvs')
+	GetPackageList(command = "pacman -Qmt", output_file = f'{archive_dir}yay_list.cvs')
 
 	# TODO replace with a key vault
 	key = get_key("./secret.json")
 
-	ArchiveDir(working_dir, temp_file, key)
-	print(PingTest(host = "192.168.99.40"))
+	ArchiveDir(archive_dir, temp_file, key)
+	print(PingTest(host = host))
 
-	chown(temp_file, 1000, 1000)
+	chown(path=temp_file, uid=uid, gid=gid)
 
 	_, returncode = TrueBashWrapper(f"runuser -l r2r0m0c0 -c 'cp {temp_file} {output_file}'")
 	if returncode != 0:
