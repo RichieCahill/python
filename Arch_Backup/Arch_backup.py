@@ -8,32 +8,51 @@ from tarfile import open as taropen
 from TMMPythonPackage import TypeTest, GetLoggerDict
 from zstandard import ZstdCompressor
 from datetime import datetime
+from time import sleep
+from os import chown, remove
+from hashlib import sha512
+from random import random 
 
 logging.config.dictConfig(GetLoggerDict("DEBUG","./Log/Arch_Info.log"))
 logging.getLogger("default")
 
 def BashWrapper(command: str):
-	TypeTest(command, test_type=str, error_msg=f"command type is {type(command)} should be str")
+	TypeTest(command, test_type=str, error_msg=f"command type = {command} should be str")
 	process = Popen(command.split(), stdout=PIPE)
 	output ,error = process.communicate()
-	return output.decode(), error
+	return output.decode(), process.returncode
 
-def get_package_list(command: str, output_file: str):
-	logging.info(f"running get_package_list {command}")
-	TypeTest(command, test_type=str, error_msg=f"command type is {type(command)} should be str")
-	TypeTest(output_file, test_type=str, error_msg=f"output_file type is {type(output_file)} should be str")
+def TrueBashWrapper(command: str):
+	TypeTest(command, test_type=str, error_msg=f"command type = {command} should be str")
+	process = Popen(command, shell=True, stdout=PIPE)
+	output ,error = process.communicate()
+	return output.decode(), process.returncode
 
-	command_output = BashWrapper(command)
-	if command_output[1]:
-		logging.debug(command_output[1])
-		print(command_output[1])
-		logging.error(f"get_package_list {command} failed")
+def PingTest(host: str, number_of_attempts: int = 60, delay: int = 5) -> bool:
+	TypeTest(host, test_type=str, error_msg=f"host is {host} should be str")
+	TypeTest(host, test_type=str, error_msg=f"host is {host} should be str")
+	for _ in range(number_of_attempts):
+		_, returncode = BashWrapper(f"ping -c 1 {host}")
+		if returncode == 0:
+			return True
+		sleep(delay)
+	return False
+
+def GetPackageList(command: str, output_file: str):
+	logging.info(f"running GetPackageList {command}")
+	TypeTest(command, str, f"command = {command} should be str")
+	TypeTest(output_file, str, f"output_file = {output_file} should be str")
+
+	command_output, returncode = BashWrapper(command)
+	if returncode != 0:
+		logging.debug(returncode)
+		logging.error(f"GetPackageList {command} failed")
 		return
 	with open(output_file, 'w') as f:
-		f.write(command_output[0].replace(" ", ","))
-	logging.info("get_package_list done")
+		f.write(command_output.replace(" ", ","))
+	logging.info("GetPackageList done")
 
-def archive_dir(dir_name: str, output_file: str, encryption_key: str):
+def ArchiveDir(dir_name: str, output_file: str, encryption_key: str):
 	TypeTest(dir_name, test_type=str, error_msg=f"dir_name type is {type(dir_name)} should be str")
 
 	tar_bytes = BytesIO()
@@ -52,30 +71,39 @@ def archive_dir(dir_name: str, output_file: str, encryption_key: str):
 def get_key(file):
 	# Open the JSON file in read mode
 	with open(file, 'r') as f:
-			data = load(f)
+		data = load(f)
 	key = data.get("key")
 	if key:
 		return key
 	raise ValueError("Failed to load key")
  
 def arch_backup():
-	try:
-		logging.info("arch_backup STARTING")
-		Now = datetime.now()
-		working_dir = "/etc/"
+	logging.info("arch_backup STARTING")
+	Now = datetime.now()
 
-		# gets all pacman packages
-		get_package_list(command = "pacman -Qent",output_file = working_dir + 'pacman_list.cvs' )
-		# gets all yay packages
-		get_package_list(command = "pacman -Qmt",output_file = working_dir + 'yay_list.cvs')
-		# TODO replace with a key vault
-		key = get_key("./secret.json")
-		archive_dir(working_dir, f"/tmp/etc_{Now.strftime('%Y-%m-%d')}.tar.zst.encrypted", key)
-		logging.info("arch_backup DONE")
-	except Exception as err:
-		logging.critical(err)
-		exit(1)
- 
+	working_dir = "/etc/"
+	temp_file = f"/tmp/{sha512(str(random()).encode()).hexdigest()}"
+	output_file = f"/ZFS/Storage/Backups/BOB/etc_{Now.strftime('%Y-%m-%d-%M')}.tar.zst.encrypted"
+
+	# gets all pacman packages
+	GetPackageList(command = "pacman -Qent",output_file = f'{working_dir}pacman_list.cvs' )
+	# gets all yay packages
+	GetPackageList(command = "pacman -Qmt",output_file = f'{working_dir}yay_list.cvs')
+
+	# TODO replace with a key vault
+	key = get_key("./secret.json")
+
+	ArchiveDir(working_dir, temp_file, key)
+	print(PingTest(host = "192.168.99.40"))
+
+	chown(temp_file, 1000, 1000)
+
+	_, returncode = TrueBashWrapper(f"runuser -l r2r0m0c0 -c 'cp {temp_file} {output_file}'")
+	if returncode != 0:
+		logging.critical(f"backup FAILED returncode = {returncode}")
+	remove(temp_file)
+
+	logging.info("arch_backup DONE")
 
 if __name__ == "__main__":
 	arch_backup()
