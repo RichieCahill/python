@@ -1,36 +1,28 @@
 import logging
 import logging.config
 from cryptography.fernet import Fernet
+from datetime import datetime
+from hashlib import sha512
 from io import BytesIO
 from json import load
-from subprocess import Popen, PIPE
-from tarfile import open as taropen
-from TMMPythonPackage import TypeTest, GetLoggerDict
-from zstandard import ZstdCompressor
-from datetime import datetime
-from time import sleep
 from os import chown, remove
-from hashlib import sha512
 from random import random 
+from tarfile import open as taropen
+from time import sleep
+from TMMPythonPackage import GetLoggerDict, TypeTest, BashWrapper, TrueBashWrapper 
+from zstandard import ZstdCompressor
 
-logging.config.dictConfig(GetLoggerDict("DEBUG","./Log/Arch_Info.log"))
+logging.dictConfig(GetLoggerDict("DEBUG","./Log/Arch_Info.log"))
 logging.getLogger("default")
 
-def BashWrapper(command: str):
-	TypeTest(command, test_type=str, error_msg=f"command type = {command} should be str")
-	process = Popen(command.split(), stdout=PIPE)
-	output ,error = process.communicate()
-	return output.decode(), process.returncode
-
-def TrueBashWrapper(command: str):
-	TypeTest(command, test_type=str, error_msg=f"command type = {command} should be str")
-	process = Popen(command, shell=True, stdout=PIPE)
-	output ,error = process.communicate()
-	return output.decode(), process.returncode
-
-def PingTest(host: str, number_of_attempts: int = 60, delay: int = 5) -> bool:
+def PingTest(
+	host:  str, 
+	delay: int = 5,
+	number_of_attempts: int = 60,
+	) -> bool:
+	TypeTest(delay, test_type=int, error_msg=f"delay is {delay} should be int")
 	TypeTest(host, test_type=str, error_msg=f"host is {host} should be str")
-	TypeTest(host, test_type=str, error_msg=f"host is {host} should be str")
+	TypeTest(number_of_attempts, test_type=int, error_msg=f"number_of_attempts is {number_of_attempts} should be int")
 	for _ in range(number_of_attempts):
 		_, returncode = BashWrapper(f"ping -c 1 {host}")
 		if returncode == 0:
@@ -52,8 +44,14 @@ def GetPackageList(command: str, output_file: str):
 		f.write(command_output.replace(" ", ","))
 	logging.info("GetPackageList done")
 
-def ArchiveDir(dir_name: str, output_file: str, encryption_key: str):
-	TypeTest(dir_name, test_type=str, error_msg=f"dir_name type is {type(dir_name)} should be str")
+def ArchiveDir(
+	dir_name: str,
+	encryption_key: str,
+	output_file: str,
+	):
+	TypeTest(dir_name, test_type=str, error_msg=f"dir_name type is {dir_name} should be str")
+	TypeTest(encryption_key, test_type=str, error_msg=f"encryption_key type is {encryption_key} should be str")
+	TypeTest(output_file, test_type=str, error_msg=f"output_file type is {output_file} should be str")
 
 	tar_bytes = BytesIO()
 	with taropen(fileobj=tar_bytes, mode="w:tar") as tar:
