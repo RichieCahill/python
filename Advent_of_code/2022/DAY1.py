@@ -14,7 +14,7 @@ from itertools import groupby
 
 
 def split_at_zero(input_list):
-    input_list_groups = groupby(input_list, lambda x: x == "")
+    input_list_groups = groupby(input_list, lambda x: x == 0)
     output_list = [sum(group) for key, group in input_list_groups if not key]
     return max(output_list)
 
