@@ -16,15 +16,15 @@ from itertools import groupby
 def split_at_zero(input_list):
     input_list_groups = groupby(input_list, lambda x: x == 0)
     output_list = [sum(group) for key, group in input_list_groups if not key]
-    return max(output_list)
+    return output_list
 
 def main():
   with open("./DAY1.txt", "r") as file:
     test = [int(line.strip()) if line.strip() != "" else 0 for line in file] 
-  # test = [1000,2000,3000,"",4000,"",5000,6000,"",7000,8000,9000,"",10000]
 
   result = split_at_zero(test)
-
-  print(result)
+  result.sort()
+  print(max(result))
+  print(sum(result[-3:]))
 
 main()
