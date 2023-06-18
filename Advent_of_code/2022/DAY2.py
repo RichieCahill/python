@@ -35,12 +35,34 @@ def rock_paper_scissors(games):
 
   return sum(results)
 
+def rock_paper_scissors_part2(games):
+
+  table = {
+    "A X": 3+0,
+    "A Y": 1+3,
+    "A Z": 2+6,
+    "B X": 1+0,
+    "B Y": 2+3,
+    "B Z": 3+6,
+    "C X": 2+0,
+    "C Y": 3+3,
+    "C Z": 1+6 
+  }
+
+  results = [table.get(game) for game in games]    
+
+  return sum(results)
+
 
 def main():
   with open("./DAY2.txt", "r") as file:
     input_file = [line.strip()  for line in file]
 
   result = rock_paper_scissors(input_file)
+
+  print(result)
+
+  result = rock_paper_scissors_part2(input_file)
 
   print(result)
 
