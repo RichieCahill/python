@@ -35,6 +35,55 @@ def rock_paper_scissors(games):
 
   return sum(results)
 
+# this is slower probly becaus of the size of the data set but uses less memory
+def rock_paper_scissors_dict_1(games):
+
+  table = {
+    "A X": 4,
+    "A Y": 8,
+    "A Z": 3,
+    "B X": 1,
+    "B Y": 5,
+    "B Z": 9,
+    "C X": 7,
+    "C Y": 2,
+    "C Z": 6
+  }
+
+  return sum(table.get(game) for game in games)
+
+# this is slower probly becaus of the size of the data set but uses less memory
+
+def rock_paper_scissors_dict_2(games):
+  return sum([{"A X": 4,"A Y": 8,"A Z": 3,"B X": 1,"B Y": 5,"B Z": 9,"C X": 7,"C Y": 2,"C Z": 6}.get(game) for game in games])
+
+# This is faster on the dataset for some reasion
+def rock_paper_scissors_dict_3(games):
+
+  table = {
+    "B X": 1,
+    "C Y": 2,
+    "A Z": 3,
+    "A X": 4,
+    "B Y": 5,
+    "C Z": 6,
+    "C X": 7,
+    "A Y": 8,
+    "B Z": 9,
+  }
+
+  results = [table.get(game) for game in games]    
+
+  return sum(results)
+
+def rock_paper_scissors_list(games):
+
+  table = (None, "B X", "C Y", "A Z", "A X", "B Y", "C Z", "C X", "A Y", "B Z")
+
+  results = [table.index(game) for game in games]    
+
+  return sum(results)
+
 def rock_paper_scissors_part2(games):
 
   table = {
@@ -57,14 +106,15 @@ def rock_paper_scissors_part2(games):
 def main():
   with open("./DAY2.txt", "r") as file:
     input_file = [line.strip()  for line in file]
-
-  result = rock_paper_scissors(input_file)
-
+  num = 1000
+  for _ in range(num):
+    result = rock_paper_scissors_dict_3(input_file)
+  print(result)
+  for _ in range(num):
+    result = rock_paper_scissors(input_file)
   print(result)
 
   result = rock_paper_scissors_part2(input_file)
-
   print(result)
-
 
 main()
