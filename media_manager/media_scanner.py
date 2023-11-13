@@ -75,7 +75,10 @@ def find_media_files(search_dirs: list[str], extensions: list[str]) -> set[Path]
     return files
 
 
-def get_media_info(file_path: Path) -> dict[str, str | bool | int | float | None]:
+def get_media_info(
+    file_path: Path,
+    search_dir: str,
+) -> dict[str, str | bool | int | float | None]:
     """
     Returns a dictionary containing information about a media file.
 
@@ -104,7 +107,7 @@ def get_media_info(file_path: Path) -> dict[str, str | bool | int | float | None
             - season (if media_type is TV)
             - release_year
     """
-    search_dir = "/ZFS/Storage/Plex/"
+
     media_info = MediaInfo.parse(file_path)
     track = media_info.tracks[0]
 
@@ -157,7 +160,7 @@ def add_batched_media(file_group: list[Path], db_session: DB_Session) -> None:
     """
     batched_start_time = time()
     with ThreadPoolExecutor(max_workers=10) as executor:
-        test2 = [executor.submit(get_media_info, file_path) for file_path in file_group]
+        test2 = [executor.submit(get_media_info, file_path, "/ZFS/Storage/Plex/") for file_path in file_group]
         test = [future.result() for future in as_completed(test2)]
     db_session.execute(insert(Media), test)
     logging.info("Committing to database")
