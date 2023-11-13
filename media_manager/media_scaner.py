@@ -2,9 +2,11 @@
 
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime
 from pathlib import Path
 from time import time
 
+import tomllib as toml
 from pymediainfo import MediaInfo
 from sqlalchemy import URL, MetaData, create_engine, insert, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -22,7 +24,11 @@ class Media(MediaManager):
     __table_args__ = {}
 
     id:                  Mapped[int] = mapped_column(primary_key=True)
+    added:               Mapped[datetime] = mapped_column(default=datetime.now)
+    modified:            Mapped[datetime] = mapped_column(default=datetime.now, onupdate=datetime.now)
+
     file_path:           Mapped[str] = mapped_column(unique=True, index=True)
+    release_year:        Mapped[int] = mapped_column(nullable=True)
 
     audio_codec:         Mapped[str] = mapped_column(nullable=True)
     audio_language:      Mapped[str] = mapped_column(nullable=True)
@@ -40,10 +46,23 @@ class Media(MediaManager):
     video_format:        Mapped[str] = mapped_column(nullable=True)
 
     series_name:         Mapped[str] = mapped_column(nullable=True)
-    session:             Mapped[str] = mapped_column(nullable=True)
+    season:              Mapped[str] = mapped_column(nullable=True)
+
+    subtitle:            Mapped[bool] = mapped_column(default=False)
+    artwork:             Mapped[bool] = mapped_column(default=False)
 
 
 def find_media_files(search_dirs: list[str], extensions: list[str]) -> set[Path]:
+    """
+    Find media files with the given extensions in the specified directories.
+
+    Args:
+        search_dirs (list[str]): list of directories to search for media files.
+        extensions (list[str]): list of file extensions to search for.
+
+    Returns:
+        Set[Path]: Set of Path objects representing the found media files.
+    """
     logging.info("Searching for media files")
     files = set()
     for search_dir in search_dirs:
@@ -56,18 +75,52 @@ def find_media_files(search_dirs: list[str], extensions: list[str]) -> set[Path]
     return files
 
 
-def get_media_info(file_path: str) -> dict:
+def get_media_info(file_path: Path) -> dict[str, str | bool | int | float | None]:
+    """
+    Returns a dictionary containing information about a media file.
+
+    Args:
+        file_path (Path): The path to the media file.
+
+    Returns:
+        dict[str, str | bool | int | float | None]:
+        A dictionary containing the following keys:
+            - file_path
+            - media_type
+            - frame_count
+            - stream_size
+            - video_codec
+            - frame_rate
+            - file_size
+            - duration
+            - file_name
+            - file_extension
+            - bit_rate
+            - audio_stream_count
+            - audio_codec
+            - audio_language
+            - video_format
+            - series_name (if media_type is TV)
+            - season (if media_type is TV)
+            - release_year
+    """
     search_dir = "/ZFS/Storage/Plex/"
     media_info = MediaInfo.parse(file_path)
     track = media_info.tracks[0]
-    series_name = None
-    session = None
+
     complete_name = track.complete_name
     media_type = complete_name.replace(search_dir, "").split("/")[0]
+
+    if media_type in ("4K", "Movies"):
+        release_year = int(file_path.stem.split("-")[-1])
+        series_name = None
+        season = None
+
     if media_type == "TV":
         series_info = complete_name.replace(f"{search_dir}TV/", "").split("/")
-        series_name = series_info[0]
-        session = series_info[1]
+        release_year = int(series_info[0].split("-")[-1])
+        series_name = series_info[0].replace(f"-{release_year}", "")
+        season = series_info[1]
 
     return {
         "file_path": track.complete_name,
@@ -86,13 +139,24 @@ def get_media_info(file_path: str) -> dict:
         "audio_language": track.audio_language_list,
         "video_format": track.format,
         "series_name": series_name,
-        "session": session,
+        "season": season,
+        "release_year": release_year,
     }
 
 
 def add_batched_media(file_group: list[Path], db_session: DB_Session) -> None:
+    """
+    Add a batch of media files to the database.
+
+    Args:
+        file_group (list[Path]): A list of file paths to media files.
+        db_session (Session): A SQLAlchemy database session.
+
+    Returns:
+        None
+    """
     batched_start_time = time()
-    with ThreadPoolExecutor(max_workers=100) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         test2 = [executor.submit(get_media_info, file_path) for file_path in file_group]
         test = [future.result() for future in as_completed(test2)]
     db_session.execute(insert(Media), test)
@@ -103,32 +167,51 @@ def add_batched_media(file_group: list[Path], db_session: DB_Session) -> None:
 
 
 def batched(iterable, batched_size):
+    """
+    Splits an iterable into batches of a specified size.
+
+    Args:
+        iterable: The iterable to be batched.
+        batched_size: The size of each batch.
+
+    Yields:
+        A batch of the specified size from the iterable.
+    """
     iterable_len = len(iterable)
     for ndx in range(0, iterable_len, batched_size):
         yield iterable[ndx : min(ndx + batched_size, iterable_len)]
 
 
-# 121mb ram
-# 2023-11-05 16:36:21-root-INFO-Finished in 1267.9497802257538 seconds
-# 2023-11-06 02:17:26-root-INFO-Finished in 473.0883719921112 seconds
-# 2023-11-06 03:44:58-root-INFO-Finished in 388.3023223876953 seconds
-# 2023-11-11 19:55:46-root-INFO-Finished in 734.7975401878357 seconds batch size 1
-# 2023-11-11 02:06:23-root-INFO-Finished in 892.5836849212646 seconds batch size 100
-# 2023-11-11 02:57:31-root-INFO-Finished in 1085.956045627594 seconds batch size 1000
-
-# 2023-11-11 20:05:02-root-INFO-Finished in 66.27891302108765 seconds batch size 1000
-# with 100 workers scaning media
-
-
 def add_media(files: list[Path], db_session: DB_Session) -> None:
+    """
+    Adds a list of media files to the database.
+
+    Args:
+        files (list[Path]): A list of Path objects representing the media files to be added.
+        db_session (DB_Session): An instance of the database session to use for adding the media files.
+
+    Returns:
+        None
+    """
     logging.info(f"Adding {len(files)} files to database")
     # TODO replace with batched when 2.12 is released
-    file_groups = batched(files, batched_size=1)
+    file_groups = batched(files, batched_size=100)
     for file_group in file_groups:
         add_batched_media(file_group=file_group, db_session=db_session)
 
 
 def remove_existing_files(files: list[Path], db_session: DB_Session) -> list[Path]:
+    """
+    Removes existing files from the given list of files based on their file names
+    that already exist in the database.
+
+    Args:
+        files (list[Path]): A list of Path objects representing files to be scanned.
+        db_session (Session): A SQLAlchemy session object to interact with the database.
+
+    Returns:
+        list[Path]: A list of Path objects representing files that do not exist in the database.
+    """
     logging.info("Removing existing files")
 
     db_paths = db_session.execute(select(Media.file_name)).scalars().all()
@@ -137,8 +220,10 @@ def remove_existing_files(files: list[Path], db_session: DB_Session) -> list[Pat
 
 
 def main() -> None:
-    """main."""
-
+    """
+    Main function that scans for media files in specified directories,
+    removes existing files from the database, and adds new files to the database.
+    """
     start_time = time()
 
     logging.basicConfig(
@@ -149,15 +234,17 @@ def main() -> None:
 
     logging.info("Starting Media Scanner")
 
-
+    config_path = Path("secret.toml")
+    with config_path.open("rb") as config_file:
+        config = toml.load(config_file)
 
     engine_url = URL.create(
         "postgresql",
-        username=username,
-        password=password,
-        host=host,
-        port=5432,
-        database=database,
+        username=config["database"]["username"],
+        password=config["database"]["password"],
+        host=config["database"]["host"],
+        port=config["database"].get("port", 5432),
+        database=config["database"]["database"],
     )
     logging.debug(f"engine_url {engine_url}")
     engine = create_engine(engine_url)
