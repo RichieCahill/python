@@ -248,3 +248,15 @@ def solve(m, s, r=range):
 
 
 221
+
+def solve(b,w,l=len):
+ f=lambda i,j,k:k==l(w)or not(i>=l(b)or j>=l(b[0])or i<0 or j<0 or b[i][j]!=w[k])and(f(i+1,j,k+1)|f(i-1,j,k+1)|f(i,j+1,k+1)|f(i,j-1,k+1))
+ return any(f(i//l(b),i%l(b),0)for i in range(l(b)*l(b[0])))
+
+def solve(b,w,l=len):
+ f=lambda i,j,k:k==l(w)or 0<=i<l(b)>0<=j<l(b[0])and b[i][j]==w[k]and(f(i+1,j,k+1)|f(i-1,j,k+1)|f(i,j+1,k+1)|f(i,j-1,k+1))
+ return any(f(i//l(b),i%l(b),0)for i in range(l(b)*l(b[0])))
+
+import functools as f
+z=len
+solve=l=f.cache(lambda s,t:z(t)if not s else[(1+min(l(s,t[1:]),l(s[1:],t),l(s[1:],t[1:]))),l(s[1:],t[1:])][s[0]==t[0]]if t else z(s))
