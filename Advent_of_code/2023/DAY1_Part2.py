@@ -1,6 +1,8 @@
 from pathlib import Path
+from functools import cache
 
 
+@cache
 def check_sub_string(sub_string: str):
     """
     Checks if the given sub_string contains any number words and returns the corresponding digit.
