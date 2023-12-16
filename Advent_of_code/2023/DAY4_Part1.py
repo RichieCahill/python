@@ -11,9 +11,7 @@ def make_int_set(numbers: str) -> set[int]:
 
 
 def main():
-    input_file = Path(
-        "./Advent_of_code/2023/DAY4_Part1.txt"
-    )
+    input_file = Path("./Advent_of_code/2023/DAY4_Part1.txt")
     with input_file.open("r") as file:
         input_data = [line.strip() for line in file]
     total = 0
@@ -24,7 +22,9 @@ def main():
         list_card_numbers = make_int_set(winning_numbers)
         wining_value_count = len(list_card_numbers.intersection(list_winning_numbers))
 
-        total += int(min(wining_value_count, 1) * (2 ** (wining_value_count - 1)))
+        if wining_value_count == 0:
+            continue
+        total += 1 << (wining_value_count - 1)
 
     print(total)
 
