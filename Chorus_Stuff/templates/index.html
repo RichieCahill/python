@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>File List</title>
+    <script>
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            var fileInput = document.querySelector('input[type="file"]');
+
+            // Check if a file is selected
+            if (fileInput.files.length > 0) {
+                var file = fileInput.files[0];
+
+                // Create a FormData object to send the file
+                var formData = new FormData();
+                formData.append('file', file);
+
+                // Send the file using AJAX
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', "{{ url_for('file_store.upload') }}");
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        // File upload successful
+                        var message = "File uploaded successfully";
+                        var messageElement = document.getElementById("message");
+                        messageElement.textContent = message;
+
+                        // Store the message in local storage
+                        localStorage.setItem("message", message);
+                    } else {
+                        // File upload failed
+                        var message = "File upload failed";
+                        var messageElement = document.getElementById("message");
+                        messageElement.textContent = message;
+
+                        // Store the message in local storage
+                        localStorage.setItem("message", message);
+                    }
+
+                    // Refresh the page
+                    location.reload();
+                };
+                xhr.send(formData);
+            } else {
+                // No file selected
+                var message = "Please select a file";
+                var messageElement = document.getElementById("message");
+                messageElement.textContent = message;
+
+                // Store the message in local storage
+                localStorage.setItem("message", message);
+
+                // Refresh the page
+                location.reload();
+            }
+        }
+
+        // Retrieve the message from local storage on page load
+        window.onload = function () {
+            var message = localStorage.getItem("message");
+            var messageElement = document.getElementById("message");
+            messageElement.textContent = message;
+
+            // Clear the message from local storage
+            localStorage.removeItem("message");
+        };
+    </script>
+</head>
+
+<body>
+    <h1>File List</h1>
+    <ul>
+        {% for file in files %}
+        <li><a href="{{ url_for('file_store.download', filename=file) }}">{{ file }}</a></li>
+        {% endfor %}
+    </ul>
+    <form action="{{ url_for('file_store.upload') }}" method="post" enctype="multipart/form-data"
+        onsubmit="handleFormSubmit(event)">
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+    </form>
+    <div id="message"></div>
+</body>
+
+</html>
