@@ -158,17 +158,8 @@ def find_all_number_bases(matrix: list[list[str]]) -> list[dict[Cell]]:
     return search_results
 
 
-def main():
-    """Main"""
-    input_file = Path("./Advent_of_code/2023/DAY3_Part1.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
-
-    matrix = [list(line) for line in input_data]
-
-    search_results = find_all_number_bases(matrix=matrix)
-    pprint(search_results)
-
+def total_numbers(matrix: list[list[str]], search_results: list) -> int:
+    """Calculate total numbers"""
     total_number = 0
     for search_result in search_results:
         for name, cell in search_result.items():
@@ -178,8 +169,20 @@ def main():
                 total_number += compleat_left_number(matrix=matrix, cell=cell)
             if "right" in name:
                 total_number += compleat_right_number(matrix=matrix, cell=cell)
+    return total_number
 
-    print(total_number)
+
+def main():
+    """Main"""
+    input_file = Path("./Advent_of_code/2023/DAY3_Part1.txt")
+    with input_file.open("r") as file:
+        input_data = [line.strip() for line in file]
+
+    matrix = [list(line) for line in input_data]
+
+    search_results = find_all_number_bases(matrix=matrix)
+
+    print(total_numbers(matrix=matrix, search_results=search_results))
 
 
 main()
