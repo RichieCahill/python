@@ -136,6 +136,7 @@ Test/
 .vscode/
 secret.*
 *.tar.zst
+Videos/
 
 
 # For advent of code
