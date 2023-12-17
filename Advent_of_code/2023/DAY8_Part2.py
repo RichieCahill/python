@@ -1,4 +1,6 @@
 """DAY7_Part1"""
+from itertools import product
+from math import lcm
 from pathlib import Path
 from pprint import pprint
 
@@ -18,26 +20,25 @@ def create_map(input_data: str) -> dict[dict[str, str]]:
     return search_map
 
 
-def get_new_position(
-    positions: list[dict[str, str]],
-    instruction: str,
+def get_pattern(
+    instructions: str,
     search_map: dict[dict[str, str]],
-) -> list[dict[str, str]]:
-    """get_new_position"""
-    return [search_map.get(position).get(instruction) for position in positions]
+    position: str,
+    max_iter: int,
+) -> str:
+    """get_pattern"""
+    output = []
+    instruction_len = len(instructions)
+    for index in range(max_iter):
+        current_instruction = instructions[index % instruction_len]
+        output.append(position)
+        position = search_map.get(position).get(current_instruction)
+    return output
 
 
-def test_for_z(positions: str) -> bool:
-    """test_for_z"""
-    for position in positions:  # noqa: SIM110 this apreas to be slower
-        if position[-1] != "Z":
-            return False
-    return True
-
-
-def test_for_z_slow(positions: str) -> bool:
-    """test_for_z"""
-    return all(position[-1] == "Z" for position in positions)
+def get_z_positions(pattern: list[str]) -> list[int]:
+    """get_z_position"""
+    return [index for index, position in enumerate(pattern) if position[-1] == "Z"]
 
 
 def main():
@@ -46,36 +47,32 @@ def main():
     with input_file.open("r") as file:
         input_data = [line.strip() for line in file]
 
-    instruction = input_data.pop(0)
+    instructions = input_data.pop(0)
     input_data.pop(0)
 
-    pprint(instruction)
+    max_iter = len(instructions) * len(input_data)
+    print(max_iter)
+
     search_map = create_map(input_data)
 
-    instruction_len = len(instruction)
-
     positions = [position for position in search_map if position[-1] == "A"]
-
-    max_iter = 10000000
-    count = 0
-    while True:
-        current_instruction = instruction[count % instruction_len]
-
-        positions = get_new_position(
-            positions=positions,
-            instruction=current_instruction,
+    patterns = [
+        get_pattern(
+            instructions=instructions,
             search_map=search_map,
+            position=position,
+            max_iter=max_iter,
         )
+        for position in positions
+    ]
 
-        count += 1
+    all_items_ending_with_z = [get_z_positions(pattern=pattern) for pattern in patterns]
 
-        if test_for_z(positions=positions):
-            break
+    combinations = list(product(*all_items_ending_with_z))
 
-        if count > max_iter:
-            break
+    lcm_for_map = min([lcm(*combination) for combination in combinations])
 
-    print(count)
+    pprint(lcm_for_map)
 
 
 main()
