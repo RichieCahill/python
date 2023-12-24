@@ -1,11 +1,12 @@
-from pathlib import Path
+"""DAY1_Part2"""
+
 from functools import cache
+from pathlib import Path
 
 
 @cache
-def check_sub_string(sub_string: str):
-    """
-    Checks if the given sub_string contains any number words and returns the corresponding digit.
+def check_sub_string(sub_string: str) -> str | None:
+    """Checks if the given sub_string contains any number words and returns the corresponding digit.
 
     Args:
         sub_string (str): The input sub_string to check.
@@ -26,14 +27,13 @@ def check_sub_string(sub_string: str):
     }
     for word in number_lookup:
         if word in sub_string:
-            return number_lookup.get(word)
+            return number_lookup[word]
 
     return None
 
 
 def find_left_number(line: str) -> int:
-    """
-    Finds the leftmost number in a given line.
+    """Finds the leftmost number in a given line.
 
     Args:
         line (str): The input line.
@@ -48,11 +48,12 @@ def find_left_number(line: str) -> int:
             return number
         if char.isdigit():
             return char
+    error_msg = "No number found in string."
+    raise ValueError(error_msg)
 
 
 def find_right_number(line: str) -> int:
-    """
-    Finds the right number in a given line.
+    """Finds the right number in a given line.
 
     Args:
         line (str): The input line.
@@ -67,11 +68,12 @@ def find_right_number(line: str) -> int:
             return number
         if char.isdigit():
             return char
+    error_msg = "No number found in string."
+    raise ValueError(error_msg)
 
 
 def find_number(line: str) -> int:
-    """
-    Find the number in a string by combining the leftmost and rightmost numbers.
+    """Find the number in a string by combining the leftmost and rightmost numbers.
 
     Args:
         line (str): The input string.
@@ -82,9 +84,9 @@ def find_number(line: str) -> int:
     return int(find_left_number(line) + find_right_number(line))
 
 
-def main():
-    """
-    This function reads input data from a file and calculates the sum of numbers
+def main() -> None:
+    """This function reads input data from a file and calculates the sum of numbers
+
     returned by the find_number function for each line in the input data.
 
     Returns:
