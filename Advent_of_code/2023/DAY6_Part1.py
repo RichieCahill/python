@@ -30,8 +30,7 @@ def calculate_result(time: int, distance_record: int) -> int:
 
 def main():
     input_file = Path("./Advent_of_code/2023/DAY6_Part1.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
+    input_data = input_file.read_text().splitlines()
 
     race_stats = get_race_stats(input_data=input_data)
 

@@ -49,8 +49,7 @@ def main():
     Main function to read input file and calculate the sum of numbers in each line.
     """
     input_file = Path("./Advent_of_code/2023/DAY1_Part1.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
+    input_data = input_file.read_text().splitlines()
 
     print(sum([find_number(line) for line in input_data]))
 

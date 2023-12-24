@@ -48,8 +48,7 @@ def get_history(change_map: list[int]) -> int:
 
 def main():
     input_file = Path("./Advent_of_code/2023/DAY9_Part1.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
+    input_data = input_file.read_text().splitlines()
 
     input_data = clean_data(input_data)
 

@@ -58,8 +58,7 @@ class CamelCardsHand:
 
 def main():
     input_file = Path("./Advent_of_code/2023/DAY7_Part1.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
+    input_data = input_file.read_text().splitlines()
 
     camel_cards_hands = [CamelCardsHand(*line.split(" ")) for line in input_data]
 

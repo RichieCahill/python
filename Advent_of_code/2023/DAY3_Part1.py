@@ -175,8 +175,7 @@ def total_numbers(matrix: list[list[str]], search_results: list) -> int:
 def main():
     """Main"""
     input_file = Path("./Advent_of_code/2023/DAY3_Part1.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
+    input_data = input_file.read_text().splitlines()
 
     matrix = [list(line) for line in input_data]
 

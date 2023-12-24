@@ -70,8 +70,7 @@ def main():
         None
     """
     input_file = Path("./Advent_of_code/2023/DAY4_Part2.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
+    input_data = input_file.read_text().splitlines()
 
     list_of_copy_of_tickets = [1] * len(input_data)
     list_of_copy_of_tickets[1] = 1

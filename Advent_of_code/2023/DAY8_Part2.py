@@ -44,8 +44,7 @@ def get_z_positions(pattern: list[str]) -> list[int]:
 def main():
     """main"""
     input_file = Path("./Advent_of_code/2023/DAY8_Part2.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
+    input_data = input_file.read_text().splitlines()
 
     instructions = input_data.pop(0)
     input_data.pop(0)

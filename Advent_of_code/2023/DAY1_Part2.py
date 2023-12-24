@@ -91,8 +91,7 @@ def main():
         The sum of numbers returned by the find_number function.
     """
     input_file = Path("./Advent_of_code/2023/DAY1_Part2.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
+    input_data = input_file.read_text().splitlines()
 
     print(sum([find_number(line) for line in input_data]))
 

@@ -33,8 +33,7 @@ def game_posable(results: str) -> bool:
 
 def main():
     input_file = Path("./Advent_of_code/2023/DAY2_Part2.txt")
-    with input_file.open("r") as file:
-        input_data = [line.strip() for line in file]
+    input_data = input_file.read_text().splitlines()
 
     result = [game_posable(line.split(": ")[1]) for line in input_data]
 
