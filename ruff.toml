@@ -1,6 +1,8 @@
 select = ["ALL"]
-
 target-version = "py311"
+
+line-length = 120
+
 
 ignore = [
     "G004",   # Logging statement uses f-string (PERM: I use f-string in loogin)
@@ -11,6 +13,9 @@ ignore = [
     "T203",   # Use of pprint statement (PERM: All this code is from experiment and testing)
     "N999",   # module dose not used snake_case (TEMP: I don't want to rename evreythin at this time)
 ]
+
+[lint.pydocstyle]
+convention = "google"
 
 [lint.flake8-builtins]
 builtins-ignorelist = ["id"]
