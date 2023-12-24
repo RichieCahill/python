@@ -1,9 +1,10 @@
+"""DAY2_Part1"""
+
 from pathlib import Path
 
 
 def game_posable(results: str) -> bool:
-    """
-    Check if the given results are posable in the game.
+    """Check if the given results are posable in the game.
 
     Args:
         results (str): The results of the game in the format "value color, value color, ..."
@@ -26,7 +27,8 @@ def game_posable(results: str) -> bool:
     return True
 
 
-def main():
+def main() -> None:
+    """Main"""
     input_file = Path("./Advent_of_code/2023/DAY2_Part1.txt")
     input_data = input_file.read_text().splitlines()
 

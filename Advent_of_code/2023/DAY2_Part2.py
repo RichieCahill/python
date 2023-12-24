@@ -1,12 +1,10 @@
-import re
+"""DAY2_Part2"""
 from math import prod
 from pathlib import Path
-from pprint import pprint
 
 
 def game_posable(results: str) -> bool:
-    """
-    Determines if the game is posable based on the results.
+    """Determines if the game is posable based on the results.
 
     Args:
         results (str): The results of the game.
@@ -31,7 +29,8 @@ def game_posable(results: str) -> bool:
     return prod(largest_count.values())
 
 
-def main():
+def main() -> None:
+    """Main"""
     input_file = Path("./Advent_of_code/2023/DAY2_Part2.txt")
     input_data = input_file.read_text().splitlines()
 
