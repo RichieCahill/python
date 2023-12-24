@@ -17,6 +17,7 @@ def calculate_distance_between_galaxies(universe: Universe) -> dict:
 
 
 def main() -> None:
+    """Main"""
     input_file = Path("./Advent_of_code/2023/DAY11_Part2.txt")
     with input_file.open("r") as file:
         input_data = [line.strip() for line in file]

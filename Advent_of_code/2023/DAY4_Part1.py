@@ -11,6 +11,7 @@ def make_int_set(numbers: str) -> set[int]:
 
 
 def main() -> None:
+    """Main"""
     input_file = Path("./Advent_of_code/2023/DAY4_Part1.txt")
     input_data = input_file.read_text().splitlines()
 

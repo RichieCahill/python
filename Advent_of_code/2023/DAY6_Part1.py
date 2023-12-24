@@ -29,6 +29,7 @@ def calculate_result(time: int, distance_record: int) -> int:
 
 
 def main() -> None:
+    """Main"""
     input_file = Path("./Advent_of_code/2023/DAY6_Part1.txt")
     input_data = input_file.read_text().splitlines()
 

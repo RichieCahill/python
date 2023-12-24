@@ -57,6 +57,7 @@ def calculate_distance_between_galaxies(galaxies: list[Galaxy]) -> dict:
 
 
 def main() -> None:
+    """Main"""
     input_file = Path("./Advent_of_code/2023/DAY11_Part1.txt")
     input_data = input_file.read_text().splitlines()
 

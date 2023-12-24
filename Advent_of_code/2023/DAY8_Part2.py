@@ -42,7 +42,7 @@ def get_z_positions(pattern: list[str]) -> list[int]:
 
 
 def main() -> None:
-    """main"""
+    """Main"""
     input_file = Path("./Advent_of_code/2023/DAY8_Part2.txt")
     input_data = input_file.read_text().splitlines()
 

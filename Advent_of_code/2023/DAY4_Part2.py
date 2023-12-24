@@ -63,12 +63,7 @@ def count_winning_tickets(
 
 
 def main() -> None:
-    """
-    This function reads input data from a file, processes it, and prints the sum of a list of tickets.
-
-    Returns:
-        None
-    """
+    """Main"""
     input_file = Path("./Advent_of_code/2023/DAY4_Part2.txt")
     input_data = input_file.read_text().splitlines()
 
