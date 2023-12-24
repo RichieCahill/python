@@ -22,11 +22,7 @@ class Galaxy:
 
 def add_lines(input_data: list[str]) -> list[str]:
     """add_lines"""
-    indexes = [
-        index
-        for index, line in enumerate(input_data)
-        if len(set(line)) == 1 and set(line) == {"."}
-    ]
+    indexes = [index for index, line in enumerate(input_data) if len(set(line)) == 1 and set(line) == {"."}]
     line_len = len(input_data[0])
     indexes.sort(reverse=True)
     for index in indexes:
@@ -56,16 +52,11 @@ def calculate_distance_between_galaxies(galaxies: list[Galaxy]) -> dict:
     """calculate_distance_between_galaxies"""
     distances = []
     for index, galaxy in enumerate(galaxies):
-        distances.extend(
-            [
-                galaxy.get_distance(other_galaxy)
-                for other_galaxy in galaxies[index + 1 :]
-            ]
-        )
+        distances.extend([galaxy.get_distance(other_galaxy) for other_galaxy in galaxies[index + 1 :]])
     return distances
 
 
-def main():
+def main() -> None:
     input_file = Path("./Advent_of_code/2023/DAY11_Part1.txt")
     input_data = input_file.read_text().splitlines()
 

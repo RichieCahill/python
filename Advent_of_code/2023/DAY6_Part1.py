@@ -28,15 +28,14 @@ def calculate_result(time: int, distance_record: int) -> int:
     return counter
 
 
-def main():
+def main() -> None:
     input_file = Path("./Advent_of_code/2023/DAY6_Part1.txt")
     input_data = input_file.read_text().splitlines()
 
     race_stats = get_race_stats(input_data=input_data)
 
     number_of_wins = [
-        calculate_result(time=int(time), distance_record=int(distance_record))
-        for time, distance_record in race_stats
+        calculate_result(time=int(time), distance_record=int(distance_record)) for time, distance_record in race_stats
     ]
     print(prod(number_of_wins))
 

@@ -62,7 +62,7 @@ def count_winning_tickets(
     return len(list_card_numbers.intersection(list_winning_numbers))
 
 
-def main():
+def main() -> None:
     """
     This function reads input data from a file, processes it, and prints the sum of a list of tickets.
 

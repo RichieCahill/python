@@ -172,7 +172,7 @@ def total_numbers(matrix: list[list[str]], search_results: list) -> int:
     return total_number
 
 
-def main():
+def main() -> None:
     """Main"""
     input_file = Path("./Advent_of_code/2023/DAY3_Part1.txt")
     input_data = input_file.read_text().splitlines()

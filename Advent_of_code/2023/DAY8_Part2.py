@@ -41,7 +41,7 @@ def get_z_positions(pattern: list[str]) -> list[int]:
     return [index for index, position in enumerate(pattern) if position[-1] == "Z"]
 
 
-def main():
+def main() -> None:
     """main"""
     input_file = Path("./Advent_of_code/2023/DAY8_Part2.txt")
     input_data = input_file.read_text().splitlines()

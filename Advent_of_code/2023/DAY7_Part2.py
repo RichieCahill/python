@@ -69,7 +69,7 @@ class CamelCardsHand:
         return self.score > other.score
 
 
-def main():
+def main() -> None:
     input_file = Path("./Advent_of_code/2023/DAY7_Part2.txt")
     input_data = input_file.read_text().splitlines()
 
@@ -77,9 +77,7 @@ def main():
 
     camel_cards_hands.sort()
 
-    winnings = [
-        hand.bet * ranking for ranking, hand in enumerate(camel_cards_hands, start=1)
-    ]
+    winnings = [hand.bet * ranking for ranking, hand in enumerate(camel_cards_hands, start=1)]
 
     pprint(sum(winnings))
 

@@ -45,7 +45,7 @@ def get_history(change_map: list[int]) -> int:
     return 0
 
 
-def main():
+def main() -> None:
     input_file = Path("./Advent_of_code/2023/DAY9_Part2.txt")
     input_data = input_file.read_text().splitlines()
 

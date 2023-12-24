@@ -19,7 +19,7 @@ def create_map(input_data):
     return search_map
 
 
-def main():
+def main() -> None:
     input_file = Path("./Advent_of_code/2023/DAY8_Part1.txt")
     input_data = input_file.read_text().splitlines()
 

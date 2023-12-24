@@ -10,7 +10,7 @@ def make_int_set(numbers: str) -> set[int]:
     return {int(i) for i in numbers_strip}
 
 
-def main():
+def main() -> None:
     input_file = Path("./Advent_of_code/2023/DAY4_Part1.txt")
     input_data = input_file.read_text().splitlines()
 

@@ -11,15 +11,12 @@ def calculate_distance_between_galaxies(universe: Universe) -> dict:
     distances = []
     for index, galaxy in enumerate(universe.galaxies):
         distances.extend(
-            [
-                universe.get_distance(galaxy, other_galaxy)
-                for other_galaxy in universe.galaxies[index + 1 :]
-            ]
+            [universe.get_distance(galaxy, other_galaxy) for other_galaxy in universe.galaxies[index + 1 :]]
         )
     return distances
 
 
-def main():
+def main() -> None:
     input_file = Path("./Advent_of_code/2023/DAY11_Part2.txt")
     with input_file.open("r") as file:
         input_data = [line.strip() for line in file]

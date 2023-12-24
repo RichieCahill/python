@@ -35,7 +35,7 @@ def test6(number: int) -> int:
     return min(number, 1) << (max(number - 1, 0))
 
 
-def main():
+def main() -> None:
     # number_of_tests = 1_000_000_000
     number_of_tests = 1_000_000
 
