@@ -1,7 +1,6 @@
 """DAY7_Part1"""
 from pathlib import Path
 from pprint import pprint
-from time import sleep
 
 
 def create_map(input_data):

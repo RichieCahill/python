@@ -1,7 +1,5 @@
-import re
 from math import prod
 from pathlib import Path
-from pprint import pprint
 
 
 def get_race_stats(input_data: list[str]) -> list[list[str]]:

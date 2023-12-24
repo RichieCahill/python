@@ -1,7 +1,4 @@
-import re
-from math import prod
 from pathlib import Path
-from pprint import pprint
 
 
 def make_int_set(numbers: str) -> set[int]:

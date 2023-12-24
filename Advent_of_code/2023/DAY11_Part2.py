@@ -2,7 +2,6 @@
 from pathlib import Path
 from pprint import pprint
 
-
 z
 
 
@@ -11,7 +10,7 @@ def calculate_distance_between_galaxies(universe: Universe) -> dict:
     distances = []
     for index, galaxy in enumerate(universe.galaxies):
         distances.extend(
-            [universe.get_distance(galaxy, other_galaxy) for other_galaxy in universe.galaxies[index + 1 :]]
+            [universe.get_distance(galaxy, other_galaxy) for other_galaxy in universe.galaxies[index + 1 :]],
         )
     return distances
 

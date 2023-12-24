@@ -1,12 +1,8 @@
-import re
-from math import prod
 from pathlib import Path
-from pprint import pprint
 
 
 def make_int_set(numbers: str) -> set[int]:
-    """
-    Converts a string of numbers into a set of integers.
+    """Converts a string of numbers into a set of integers.
 
     Args:
         numbers (str): A string of numbers separated by spaces.
@@ -25,8 +21,7 @@ def add_to_list_of_copy_of_tickets(
     wining_value_count: int,
     copy_of_tickets: int,
 ) -> list[int]:
-    """
-    Adds the specified number of copies of tickets to the list of copy of tickets.
+    """Adds the specified number of copies of tickets to the list of copy of tickets.
 
     Args:
         list_of_copy_of_tickets (list[int]): The list of copy of tickets.
@@ -47,8 +42,7 @@ def count_winning_tickets(
     card_numbers: list[int],
     winning_numbers: list[int],
 ) -> int:
-    """
-    Counts the number of winning tickets by finding the intersection of card_numbers and winning_numbers.
+    """Counts the number of winning tickets by finding the intersection of card_numbers and winning_numbers.
 
     Args:
         card_numbers (list[int]): List of card numbers.
