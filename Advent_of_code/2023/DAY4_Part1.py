@@ -1,7 +1,17 @@
+"""DAY4_Part1.py"""
+
 from pathlib import Path
 
 
 def make_int_set(numbers: str) -> set[int]:
+    """Converts a string of numbers into a set of integers.
+
+    Args:
+        numbers (str): A string containing numbers separated by spaces.
+
+    Returns:
+        set[int]: A set of integers extracted from the input string.
+    """
     numbers_clean = numbers.strip().replace("  ", " ")
     numbers_strip = numbers_clean.split(" ")
     return {int(i) for i in numbers_strip}

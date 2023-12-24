@@ -42,8 +42,9 @@ class CamelCardsHand:
         current_hand = [ranking_cards.count(x) for x in set(ranking_cards)]
         current_hand.sort()
 
+        all_cards = 5
         if joker_count:
-            if joker_count == 5:
+            if joker_count == all_cards:
                 current_hand = [5]
             else:
                 current_hand[-1] += joker_count
@@ -60,11 +61,11 @@ class CamelCardsHand:
         """Return the representation of the hand of cards"""
         return f"{self.cards} {self.bet}"
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: "CamelCardsHand") -> bool:
         """Return true if the score of the hand is lower than the other"""
         return self.score < other.score
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: "CamelCardsHand") -> bool:
         """Return true if the score of the hand is greater than the other"""
         return self.score > other.score
 

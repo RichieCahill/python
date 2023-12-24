@@ -3,18 +3,24 @@ from pathlib import Path
 from pprint import pprint
 
 
-def create_map(input_data):
-    """create_map"""
+def create_map(input_data: list[str]) -> dict[str, dict[str, str]]:
+    """Create a search map based on the input data.
+
+    Args:
+        input_data (list[str]): The input data containing the map information.
+
+    Returns:
+        dict[str, dict[str, str]]: The search map, where the keys are IDs and the values are dictionaries
+        containing the left and right paths.
+
+    """
     search_map = {}
     for line in input_data:
         id, path = line.split(" = ")
 
         left, right = path.strip("()").split(", ")
 
-        search_map[id] = {
-            "L": left,
-            "R": right,
-        }
+        search_map[id] = {"L": left, "R": right}
     return search_map
 
 

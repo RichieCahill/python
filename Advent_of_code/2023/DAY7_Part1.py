@@ -47,11 +47,11 @@ class CamelCardsHand:
         """Return the representation of the hand of cards"""
         return f"{self.cards} {self.bet}"
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: "CamelCardsHand") -> bool:
         """Return true if the score of the hand is lower than the other"""
         return self.score < other.score
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: "CamelCardsHand") -> bool:
         """Return true if the score of the hand is greater than the other"""
         return self.score > other.score
 

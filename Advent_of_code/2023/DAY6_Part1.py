@@ -1,3 +1,5 @@
+"""DAY6_Part1.py"""
+
 from math import prod
 from pathlib import Path
 
