@@ -3,7 +3,7 @@
 from pathlib import Path
 
 
-def is_valid(letters: list[str], groups: list[int]) -> bool:
+def is_valid(letters: str, groups: tuple[int]) -> bool:
     """Checks if the given arrangement satisfies the group constraints.
 
     Args:
@@ -24,7 +24,7 @@ def is_valid(letters: list[str], groups: list[int]) -> bool:
     return "#" not in letters[idx:]
 
 
-def backtrack(letters: list[str], pos: int, groups: list[int]) -> int:
+def backtrack(letters: str, pos: int, groups: tuple[int]) -> int:
     """Explores all valid arrangements using backtracking.
 
     Args:
@@ -36,16 +36,17 @@ def backtrack(letters: list[str], pos: int, groups: list[int]) -> int:
         int: The number of valid arrangements.
     """
     if pos == len(letters):
-        return 1 if is_valid("".join(letters), groups) else 0
+        return 1 if is_valid(letters, groups) else 0
 
     if letters[pos] != "?":
         return backtrack(letters, pos + 1, groups)
 
     count = 0
     for state in ["#", "."]:
-        letters[pos] = state
+        letters = letters[:pos] + state + letters[pos + 1 :]
+
         count += backtrack(letters, pos + 1, groups)
-    letters[pos] = "?"
+    letters = letters[:pos] + state + letters[pos + 1 :]
     return count
 
 
@@ -57,8 +58,8 @@ def main() -> None:
     result = 0
     for line in input_data:
         split_line = line.split(" ")
-        letters = list(split_line[0])
-        numbers = [int(num) for num in split_line[1].split(",")]
+        letters = split_line[0]
+        numbers = tuple([int(num) for num in split_line[1].split(",")])
         result += backtrack(letters=letters, pos=0, groups=numbers)
 
     print(result)
