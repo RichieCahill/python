@@ -26,6 +26,10 @@ class Position:
         """Hash"""
         return hash((self.x, self.y))
 
+    def get_tile(self, grid: list[list[str]]) -> str:
+        """Get_grid"""
+        return grid[self.y][self.x]
+
 
 def make_grid(input_data: list[str]) -> list[list[str]]:
     """Make_grid"""
@@ -54,11 +58,30 @@ def get_connected_pipes(current_position: Position, grid: list[list[str]]) -> li
         "J": [up, left],
         "7": [down, left],
         "F": [down, right],
-        "S": [up, down, left, right],
     }
 
-    tile = grid[current_position.y][current_position.x]
-    return [current_position + offset for offset in connections.get(tile, [])]
+    tile = current_position.get_tile(grid)
+    return [current_position + offset for offset in connections[tile]]
+
+
+def get_connected_pipes_for_s(start: Position, grid: list[list[str]]) -> list[tuple[Position, int]]:
+    """get_connected_pipes"""
+    right = Position(1, 0)
+    left = Position(-1, 0)
+    down = Position(0, 1)
+    up = Position(0, -1)
+
+    new_positions = [start + offset for offset in [up, down, left, right]]
+
+    valid_positions = []
+    for position in new_positions:
+        if position.get_tile(grid) not in ("|", "-", "L", "J", "7", "F"):
+            continue
+        if start not in get_connected_pipes(position, grid):
+            continue
+        valid_positions.append((position, 1))
+
+    return valid_positions
 
 
 def is_valid(position: Position, grid_size: tuple[int, int]) -> bool:
@@ -68,8 +91,10 @@ def is_valid(position: Position, grid_size: tuple[int, int]) -> bool:
 
 def trace_loop(start: Position, grid: list[list[str]]) -> dict[tuple[int, int], int]:
     """Traces the loop from the starting position and calculates the distance of each tile from the start."""
-    distance_map = {}
-    queue: list[tuple[Position, int]] = [(start, 0)]
+    distance_map = {start: 0}
+
+    queue = get_connected_pipes_for_s(start=start, grid=grid)
+
     grid_size = (len(grid[0]), len(grid))
 
     while queue:
@@ -82,7 +107,7 @@ def trace_loop(start: Position, grid: list[list[str]]) -> dict[tuple[int, int], 
         queue.extend(
             [
                 (new_position, dist + 1)
-                for new_position in get_connected_pipes(position=position, grid=grid)
+                for new_position in get_connected_pipes(current_position=position, grid=grid)
                 if is_valid(position=new_position, grid_size=grid_size) and new_position not in distance_map
             ],
         )
