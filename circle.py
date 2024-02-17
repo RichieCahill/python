@@ -67,17 +67,17 @@ def draw_triangle(F: complex, A: complex, L: complex, t: complex) -> None:  # no
         error = "T must be 1 or 2"
         raise ValueError(error)
 
-    for p in [F, A, L]:
-        for q in [F, A, L]:
-            if p != q:
-                if (p, q) not in segmented:
-                    segmented.add((p, q))
-                elif (q, p) not in segmented:
-                    segmented.add((q, p))
+    if (F, A) not in segmented and (A, F) not in segmented:
+        line_seg(p=F, q=A, color=fa_color)
+        segmented.add((F, A))
 
-    line_seg(p=F, q=A, color=fa_color)
-    line_seg(p=A, q=L, color=al_color)
-    line_seg(p=L, q=F, color="b")
+    if (A, L) not in segmented and (L, A) not in segmented:
+        line_seg(p=A, q=L, color=al_color)
+        segmented.add((A, L))
+
+    if (L, F) not in segmented and (F, L) not in segmented:
+        line_seg(p=L, q=F, color="b")
+        segmented.add((L, F))
 
 
 def plotem(x: complex, y: complex, z: complex, cross_ratio: complex, h: int) -> None:
