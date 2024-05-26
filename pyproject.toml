@@ -10,3 +10,26 @@ requests = "*"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+select = ["ALL"]
+target-version = "py311"
+
+line-length = 120
+
+
+ignore = [
+    "G004",   # Logging statement uses f-string (PERM: I use f-string in logging)
+    "D400",   # First line should end with a period (PERM: I don't do this)
+    "D415",   # First line should end with a period (PERM: I don't do this)
+    "ANN101", # Missing type annotation for self in method (PERM: I don't do this)
+    "T201",   # Use of print statement (PERM: All this code is from experiment and testing)
+    "T203",   # Use of pprint statement (PERM: All this code is from experiment and testing)
+    "N999",   # module dose not used snake_case (TEMP: I don't want to rename everything at this time)
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["id"]
