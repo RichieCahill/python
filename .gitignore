@@ -138,6 +138,6 @@ secret.*
 *.tar.zst
 Videos/
 
-
 # For advent of code
 DAY*_Part*.txt
+day*.txt
