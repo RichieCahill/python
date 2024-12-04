@@ -23,7 +23,14 @@ def check_change_all(numbers: list[int]) -> bool:
     if output:
         return output
 
-    return any(numbers[index] == numbers[index - 1] for index in range(1, len(numbers)))
+    output = any(check_change(numbers[:i] + numbers[i + 1 :]) for i in range(len(numbers)))
+
+    if output:
+        return output
+
+    numbers.reverse()
+
+    return any(check_change(numbers[:i] + numbers[i + 1 :]) for i in range(len(numbers)))
 
 
 def check_report(report: str) -> bool:
