@@ -3,7 +3,7 @@
 import math
 
 HOURS_PER_YEAR = 8760
-
+HOUR = 1
 
 # https://www.ti.com/lit/an/spraby3/spraby3.pdf?ts=1753039217595
 
@@ -100,9 +100,10 @@ def estimate_annual_dual_failure_probability(system_mtbf: int, rto_hours: int) -
             'annual_probability': annual chance of simultaneous failure (fraction)
         }
     """
-    failure_rate = 1 / system_mtbf
-    joint_failure_rate_per_hour = 2 * failure_rate * (1 - math.exp(-failure_rate * rto_hours))
-    joint_mtbf_hours = 1 / joint_failure_rate_per_hour
+    failures_per_hour = HOUR / system_mtbf
+    second_node_fault_rate = 1 - math.exp(-failures_per_hour * rto_hours)
+    joint_failure_rate_per_hour = 2 * failures_per_hour * second_node_fault_rate
+    joint_mtbf_hours = HOUR / joint_failure_rate_per_hour
     annual_probability = joint_failure_rate_per_hour * HOURS_PER_YEAR
     return joint_mtbf_hours, annual_probability
 
