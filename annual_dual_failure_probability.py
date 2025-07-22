@@ -91,14 +91,13 @@ def estimate_annual_dual_failure_probability(system_mtbf: int, rto_hours: int) -
     """Estimate the probability of both nodes in a 2-node HA setup failing within the RTO window.
 
     Args:
-        mtbf_hours (float): Mean Time Between Failures per node (in hours).
-        rto_hours (float): Recovery Time Objective (i.e., the vulnerable window after one node fails).
+        mtbf_hours (int): Mean Time Between Failures per node (in hours).
+        rto_hours (int): Recovery Time Objective (i.e., the vulnerable window after one node fails).
 
     Returns:
-        tuple: {
-            'joint_mtbf_hours': hours between expected simultaneous failures
-            'annual_probability': annual chance of simultaneous failure (fraction)
-        }
+        tuple[float, float]: A tuple containing:
+            - joint_mtbf_hours: hours between expected simultaneous failures
+            - annual_probability: annual chance of simultaneous failure (fraction)
     """
     failures_per_hour = HOUR / system_mtbf
     second_node_fault_rate = 1 - math.exp(-failures_per_hour * rto_hours)
