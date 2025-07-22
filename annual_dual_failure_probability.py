@@ -1,10 +1,15 @@
-HOURS_PER_YEAR = 8760
+"""annual_dual_failure_probability."""
 
+import math
+
+HOURS_PER_YEAR = 8760
+HOUR = 1
 
 # https://www.ti.com/lit/an/spraby3/spraby3.pdf?ts=1753039217595
 
 
-def main():
+def main() -> None:
+    """Main function to run the program."""
     # indstry standerd fir 100-500
     # fit Failure In Time lower is better
     # https://docs.amd.com/r/en-US/ug116/Failure-Rate-Determination
@@ -44,7 +49,18 @@ def main():
         print(f"Annual probability of simultaneous failure: {annual_probability * 100:.5f}%")
 
 
-def redundant_mttf(mttf):
+def redundant_mttf(mttf: float) -> float:
+    """Calculate MTTF for redundant components.
+
+    Args:
+    mttf: Mean Time To Failure for a single component in hours.
+
+    Returns:
+    Adjusted MTTF for redundant configuration.
+
+    Note:
+    Uses a 1.5x factor assuming N+1 redundancy with shared load.
+    """
     return 1.5 * mttf
 
 
@@ -71,41 +87,39 @@ def calculate_system_mtbf(component_mttfs: dict) -> float:
     return 1.0 / inverse_sum
 
 
-def estimate_annual_dual_failure_probability(system_mtbf: int, rto_hours: int):
+def estimate_annual_dual_failure_probability(system_mtbf: int, rto_hours: int) -> tuple[float, float]:
     """Estimate the probability of both nodes in a 2-node HA setup failing within the RTO window.
 
     Args:
-        mtbf_hours (float): Mean Time Between Failures per node (in hours).
-        rto_hours (float): Recovery Time Objective (i.e., the vulnerable window after one node fails).
+        mtbf_hours (int): Mean Time Between Failures per node (in hours).
+        rto_hours (int): Recovery Time Objective (i.e., the vulnerable window after one node fails).
 
     Returns:
-        dict: {
-            'joint_mtbf_hours': hours between expected simultaneous failures,
-            'annual_probability': annual chance of simultaneous failure (fraction),
-            'annual_probability_percent': annual chance in percent
-        }
+        tuple[float, float]: A tuple containing:
+            - joint_mtbf_hours: hours between expected simultaneous failures
+            - annual_probability: annual chance of simultaneous failure (fraction)
     """
-    joint_failure_rate_per_hour = 1 / system_mtbf * (rto_hours / system_mtbf)
-    joint_mtbf_hours = 1 / joint_failure_rate_per_hour
+    failures_per_hour = HOUR / system_mtbf
+    second_node_fault_rate = 1 - math.exp(-failures_per_hour * rto_hours)
+    joint_failure_rate_per_hour = 2 * failures_per_hour * second_node_fault_rate
+    joint_mtbf_hours = HOUR / joint_failure_rate_per_hour
     annual_probability = joint_failure_rate_per_hour * HOURS_PER_YEAR
     return joint_mtbf_hours, annual_probability
 
 
-def fit_to_mtbf(fit):
-    """
-    Convert a FIT value (Failures In Time) to MTBF in hours.
+def fit_to_mtbf(fit: int) -> float:
+    """Convert a FIT value (Failures In Time) to MTBF in hours.
 
     Args:
-        fit_value (float): FIT value in failures per 10^9 hours
+        fit (int): FIT value in failures per 10^9 hours
 
     Returns:
         float: MTBF in hours
     """
-
     return 1000000000 / fit
 
 
 # https://www.intel.com/content/www/us/en/docs/programmable/683869/current/failure-rates.html
 
-
-main()
+if __name__ == "__main__":
+    main()
